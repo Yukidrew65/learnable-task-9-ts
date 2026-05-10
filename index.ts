@@ -1,76 +1,76 @@
-interface OnyeNlebaAnya {
-  notify(nọmba: string): void;
+interface IObserver {
+  notify(phoneNumber: string): void;
 }
 
-class Ekwenti {
-  private nọmbaEkwenti: Set<string>;
-  private ndịNlebaAnya: Set<OnyeNlebaAnya>;
+class Telephone {
+  private phoneNumbers: Set<string>;
+  private observers: Set<IObserver>;
 
   constructor() {
-    this.nọmbaEkwenti = new Set<string>();
-    this.ndịNlebaAnya = new Set<OnyeNlebaAnya>();
+    this.phoneNumbers = new Set<string>();
+    this.observers = new Set<IObserver>();
   }
 
-  public AddPhoneNumber(nọmba: string): void {
-    this.nọmbaEkwenti.add(nọmba);
+  public AddPhoneNumber(phoneNumber: string): void {
+    this.phoneNumbers.add(phoneNumber);
   }
 
-  public RemovePhoneNumber(nọmba: string): void {
-    this.nọmbaEkwenti.delete(nọmba);
+  public RemovePhoneNumber(phoneNumber: string): void {
+    this.phoneNumbers.delete(phoneNumber);
   }
 
-  public DialPhoneNumber(nọmba: string): void {
-    if (this.nọmbaEkwenti.has(nọmba)) {
-      this.notifyObservers(nọmba);
+  public DialPhoneNumber(phoneNumber: string): void {
+    if (this.phoneNumbers.has(phoneNumber)) {
+      this.notifyObservers(phoneNumber);
     } else {
-      console.log(`Enweghị ike ịkpọ: Achọtaghị nọmba a ${nọmba}`);
+      console.log(`Cannot dial: The number ${phoneNumber} has not been added.`);
     }
   }
 
-  public addObserver(onye: OnyeNlebaAnya): void {
-    this.ndịNlebaAnya.add(onye);
+  public addObserver(observer: IObserver): void {
+    this.observers.add(observer);
   }
 
-  public removeObserver(onye: OnyeNlebaAnya): void {
-    this.ndịNlebaAnya.delete(onye);
+  public removeObserver(observer: IObserver): void {
+    this.observers.delete(observer);
   }
 
-  public notifyObservers(nọmba: string): void {
-    for (const onye of this.ndịNlebaAnya) {
-      onye.notify(nọmba);
+  public notifyObservers(phoneNumber: string): void {
+    for (const observer of this.observers) {
+      observer.notify(phoneNumber);
     }
   }
 }
 
-class OnyeNlebaAnyaMbu implements OnyeNlebaAnya {
-  public notify(nọmba: string): void {
-    console.log(nọmba);
+class PhoneNumberPrinter implements IObserver {
+  public notify(phoneNumber: string): void {
+    console.log(phoneNumber);
   }
 }
 
-class OnyeNlebaAnyaAbo implements OnyeNlebaAnya {
-  public notify(nọmba: string): void {
-    console.log(`Now Dialling ${nọmba}`);
+class DialingPrinter implements IObserver {
+  public notify(phoneNumber: string): void {
+    console.log(`Now Dialling ${phoneNumber}`);
   }
 }
 
-// Set up the ekwenti (telephone)
-const ekwenti = new Ekwenti();
+// Set up the telephone
+const telephone = new Telephone();
 
-// Set up the ndị nleba anya (observers)
-const obi = new OnyeNlebaAnyaMbu();
-const ngozi = new OnyeNlebaAnyaAbo();
+// Set up the observers
+const simplePrinter = new PhoneNumberPrinter();
+const dialPrinter = new DialingPrinter();
 
 // Register the observers
-ekwenti.addObserver(obi);
-ekwenti.addObserver(ngozi);
+telephone.addObserver(simplePrinter);
+telephone.addObserver(dialPrinter);
 
 // Add phone numbers
-ekwenti.AddPhoneNumber("2347023232");
-ekwenti.AddPhoneNumber("08012345678");
+telephone.AddPhoneNumber("2347023232");
+telephone.AddPhoneNumber("08012345678");
 
 // Dial a phone number that has been added
-ekwenti.DialPhoneNumber("2347023232");
+telephone.DialPhoneNumber("2347023232");
 
 // Try dialing a number that has not been added
-ekwenti.DialPhoneNumber("09087654321");
+telephone.DialPhoneNumber("09087654321");
